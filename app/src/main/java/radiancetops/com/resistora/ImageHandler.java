@@ -2,6 +2,8 @@ package radiancetops.com.resistora;
 
 import android.hardware.Camera;
 import android.util.Log;
+import android.widget.TextView;
+
 import java.io.*;
 import java.util.Arrays;
 
@@ -19,7 +21,10 @@ public class ImageHandler implements Camera.PreviewCallback {
 
     private int[] idxs;
 
-    public ImageHandler(int width, int height, int stripheight) {
+
+    TextView rtv;
+
+    public ImageHandler(int width, int height, int stripheight, TextView rtv) {
         super();
 
         this.width = height;
@@ -37,6 +42,7 @@ public class ImageHandler implements Camera.PreviewCallback {
         this.diff = new double[width];
 
         this.idxs = new int[4];
+        this.rtv = rtv;
     }
 
     @Override
@@ -73,6 +79,33 @@ public class ImageHandler implements Camera.PreviewCallback {
         for(int i = 0; i < idxs.length; i++) {
             idxs[i] = rgb1[idxs[i]][0];
         }
+
+        rtv.setText("\n" + resistanceValue(idxs[0], idxs[1], idxs[2], idxs[3]) + "\n");
+    }
+
+    private  String resistanceValue (int a, int b, int c, int tolerance){
+        //gold is ten
+        int SILVER = 11;
+        //silver is eleven
+        int GOLD = 10;
+
+
+        if (a == 10) a = 1;
+        if (b == 10) b = 1;
+        if (a == 11) a = 8;
+        if (b == 11) b = 8;
+
+
+        int resistance = (int)((10 * b + a)*Math.pow(10,c));
+        String value = "\n" + resistance;
+
+        if (tolerance == 8){
+            tolerance = 11;
+        }
+        else tolerance = 10;
+
+        value+= " ± " + (int)(((int)(tolerance * resistance)*1.0)/100) + "Ω\n";
+        return value;
     }
 
     private void findMaxima() {

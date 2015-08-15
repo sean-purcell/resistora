@@ -11,6 +11,7 @@ import android.view.Surface;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.WindowManager;
+import android.widget.TextView;
 
 import java.io.IOException;
 
@@ -25,13 +26,13 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
 
     private ImageHandler handler;
 
-    public CameraPreview(Context context, Camera camera, int stripheight) {
+    public CameraPreview(Context context, Camera camera, int stripheight, TextView t) {
         super(context);
         mCamera = camera;
         this.context = context;
 
         Camera.Size size = mCamera.getParameters().getPreviewSize();
-        this.handler = new ImageHandler(size.width, size.height, stripheight);
+        this.handler = new ImageHandler(size.width, size.height, stripheight, t);
 
         // Install a SurfaceHolder.Callback so we get notified when the
         // underlying surface is created and destroyed.

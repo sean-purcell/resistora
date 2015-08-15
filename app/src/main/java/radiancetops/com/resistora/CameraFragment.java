@@ -72,7 +72,6 @@ public class CameraFragment extends Fragment {
         camera = getCameraInstance();
         setCamParameters(camera);
         height = 54;
-        cameraPreview = new CameraPreview(getActivity(), camera,(int)height);
 
 
     }
@@ -103,11 +102,13 @@ public class CameraFragment extends Fragment {
         singleButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View view) {
                 cameraPreview.writeCSV();
-                Log.v("data","printing");
+                Log.v("data", "printing");
             }
         });
         resistanceTextView = (TextView)view.findViewById(R.id.resistanceTextView);
         resistanceTextView.setText("\n"+WAITING+"\n");
+
+        cameraPreview = new CameraPreview(getActivity(), camera,(int)height, resistanceTextView);
 
         FrameLayout frameLayout = (FrameLayout)view.findViewById(R.id.camera_preview);
         FrameLayout.LayoutParams surfaceViewParams = new FrameLayout.LayoutParams(FrameLayout.LayoutParams.WRAP_CONTENT,FrameLayout.LayoutParams.WRAP_CONTENT);
