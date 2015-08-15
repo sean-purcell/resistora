@@ -57,7 +57,7 @@ public class ImageHandler implements Camera.PreviewCallback {
                     H[a] = S[a] = 0; // achromatic
                 } else {
                     int d = max - min;
-                    S[a] = L[a] > 127 ? d / (double) (510 - max - min) : d / (double) (max + min);
+                    S[a] = L[a] > 0.5 ? d / (double) (510 - max - min) : d / (double) (max + min);
                     if (max == r) {
                         H[a] = (g - b) / (double) d + (g < b ? 6 : 0);
                     } else if (max == g) {
