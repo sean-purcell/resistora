@@ -8,15 +8,16 @@ import android.util.Log;
  */
 public class ImageHandler implements Camera.PreviewCallback {
 
-    private int width, height;
+    private int width, height, stripheight;
 
     private double[] H, S, L;
 
-    public ImageHandler(int width, int height) {
+    public ImageHandler(int width, int height, int stripheight) {
         super();
 
         this.width = width;
         this.height = height;
+        this.stripheight = stripheight;
 
         this.H = new double[width * height];
         this.S = new double[width * height];
@@ -37,11 +38,11 @@ public class ImageHandler implements Camera.PreviewCallback {
         final int dj = +1;
 
         int a = 0;
-        for (int i = 0, ci = ii; i < height; ++i, ci += di) {
-            for (int j = 0, cj = ij; j < width; ++j, cj += dj) {
-                int y = (0xff & ((int) data[ci * width + cj]));
-                int v = (0xff & ((int) data[frameSize + (ci >> 1) * width + (cj & ~1) + 0]));
-                int u = (0xff & ((int) data[frameSize + (ci >> 1) * width + (cj & ~1) + 1]));
+        for (int i = height / 2 - stripheight / 2; i < height / 2 + stripheight / 2; ++i) {
+            for (int j = 0; j < width; ++j) {
+                int y = (0xff & ((int) data[i * width + j]));
+                int v = (0xff & ((int) data[frameSize + (i >> 1) * width + (j & ~1) + 0]));
+                int u = (0xff & ((int) data[frameSize + (i >> 1) * width + (j & ~1) + 1]));
 
                 int rgb = YUVtoRGB(y, u, v);
 
