@@ -25,5 +25,10 @@
         android:alpha="125"
         android:id="@+id/textView" />
 
+    <radiancetops.com.resistora.LineView
+        android:layout_width="match_parent"
+        android:layout_height="18dp"
+        android:layout_centerInParent="true"/>
+
 
 </RelativeLayout>
