@@ -3,6 +3,7 @@ package radiancetops.com.resistora;
 import android.hardware.Camera;
 import android.util.Log;
 import java.io.*;
+import java.util.Arrays;
 
 /**
  * Created by Sean on 15-08-15.
@@ -40,6 +41,7 @@ public class ImageHandler implements Camera.PreviewCallback {
 
     @Override
     public void onPreviewFrame(byte[] data, Camera camera) {
+        Log.v("test", "test");
         // Decode the image data to HSL
         decodeNV21(data, width, height);
 
@@ -48,13 +50,19 @@ public class ImageHandler implements Camera.PreviewCallback {
 
         // Find the maxima
         findMaxima();
+
+        colors(idxs, rgb);
+    }
+
+    private void colors(int[] idxs, int[] rgb) {
+
     }
 
     private void findMaxima() {
         int[] midx = new int[4];
         for(int i = 7; i < this.width - 7; i++) {
             boolean nvalid = false;
-            for(int j = i - 7; j <= i + 7; j++) {
+            for(int j = i - 4; j <= i + 4; j++) {
                 if(i == j) continue;
                 if(diff[j] >= diff[i]) {
                     nvalid = true;
@@ -65,22 +73,32 @@ public class ImageHandler implements Camera.PreviewCallback {
             if(!nvalid) {
                 if(diff[i] > diff[midx[3]]) {
                     midx[3] = i;
-                    for(int i = 3; i >= 1; i--) {
-                        if(diff[midx[i]] > diff[midx[i-1]]) {
-                            int tmp = midx[i] + 
+                    for(int q = 3; q >= 1; q--) {
+                        if(diff[midx[q]] > diff[midx[q-1]]) {
+                            int tmp = midx[q];
+                            midx[q] = midx[q-1];
+                            midx[q-1] = tmp;
                         }
                     }
                 }
             }
         }
+
+        Log.v("idx", midx[0] + " " + midx[1] + " " + midx[2] + " " + midx[3]);
+
+        for(int i = 0; i < 4; i++) {
+            idxs[i] = midx[i];
+        }
+
+        Arrays.sort(idxs);
     }
 
     private void avgImg() {
         for(int i = 0; i < width; i++) {
             for (int j = 0; j < stripheight; j++) {
                 Ha[i] += H[i + j * width];
-                Sa[i] += H[i + j * width];
-                La[i] += H[i + j * width];
+                Sa[i] += S[i + j * width];
+                La[i] += L[i + j * width];
             }
             Ha[i] /= stripheight;
             Sa[i] /= stripheight;
@@ -91,6 +109,9 @@ public class ImageHandler implements Camera.PreviewCallback {
     }
 
 	public void writeCSV () {
+
+        Log.v("idx", idxs[0] + " " + idxs[1] + " " + idxs[2] + " " + idxs[3]);
+        /*
         double[] h = new double[width], s = new double[width], l = new double[width];
         int[] rgb = new int[width];
         for(int i = 0; i < width; i++) {
@@ -119,15 +140,15 @@ public class ImageHandler implements Camera.PreviewCallback {
     private void decodeNV21(byte[] data, int height, int width) {
         final int frameSize = width * height;
 
-        int a = 0;
-
         for (int j = 0; j < this.width; ++j) {
             for (int i = this.height / 2 - stripheight / 2; i < this.height / 2 + stripheight / 2; ++i) {
                 int y = (0xff & ((int) data[j * this.height + i]));
                 int v = (0xff & ((int) data[frameSize + (j >> 1) * width + (i & ~1) + 0]));
                 int u = (0xff & ((int) data[frameSize + (j >> 1) * width + (i & ~1) + 1]));
 
-                int rgb = this.rgb[i * this.width + j] = YUVtoRGB(y, u, v);
+                int a = (i - (this.height / 2 - stripheight / 2)) * this.width + j;
+
+                int rgb = this.rgb[a] = YUVtoRGB(y, u, v);
 
                 double r = (0xff & (rgb >> 16)) / 255.;
                 double g = (0xff & (rgb >>  8)) / 255.;
@@ -151,7 +172,6 @@ public class ImageHandler implements Camera.PreviewCallback {
                     }
                     H[a] /= 6;
                 }
-                a++;
             }
         }
     }
