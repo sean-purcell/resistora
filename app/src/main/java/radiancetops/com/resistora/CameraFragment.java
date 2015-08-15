@@ -1,12 +1,14 @@
 package radiancetops.com.resistora;
 
 import android.app.Activity;
+import android.hardware.Camera;
 import android.net.Uri;
 import android.os.Bundle;
 import android.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.FrameLayout;
 
 
 /**
@@ -22,6 +24,8 @@ public class CameraFragment extends Fragment {
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
+    private Camera camera;
+    private CameraPreview cameraPreview;
 
     // TODO: Rename and change types of parameters
     private String mParam1;
@@ -58,13 +62,19 @@ public class CameraFragment extends Fragment {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
+        camera = getCameraInstance();
+        cameraPreview = new CameraPreview(this, camera);
+
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_camera, container, false);
+        View view = inflater.inflate(R.layout.fragment_camera, container, false);
+        FrameLayout frameLayout = (FrameLayout)view.findViewById(R.id.camera_preview);
+        frameLayout.addView(cameraPreview); 
+        return view;
     }
 
     // TODO: Rename method, update argument and hook method into UI event
@@ -89,6 +99,17 @@ public class CameraFragment extends Fragment {
     public void onDetach() {
         super.onDetach();
         mListener = null;
+    }
+
+    public static Camera getCameraInstance(){
+        Camera c = null;
+        try {
+            c = Camera.open(); // attempt to get a Camera instance
+        }
+        catch (Exception e){
+            // Camera is not available (in use or does not exist)
+        }
+        return c; // returns null if camera is unavailable
     }
 
     /**
