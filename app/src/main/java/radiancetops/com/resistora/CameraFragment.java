@@ -6,6 +6,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.app.Fragment;
 import android.view.LayoutInflater;
+import android.view.Surface;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
@@ -63,7 +64,7 @@ public class CameraFragment extends Fragment {
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
         camera = getCameraInstance();
-        cameraPreview = new CameraPreview(this, camera);
+        cameraPreview = new CameraPreview(getActivity(), camera);
 
     }
 
@@ -73,7 +74,7 @@ public class CameraFragment extends Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_camera, container, false);
         FrameLayout frameLayout = (FrameLayout)view.findViewById(R.id.camera_preview);
-        frameLayout.addView(cameraPreview); 
+        frameLayout.addView(cameraPreview);
         return view;
     }
 
