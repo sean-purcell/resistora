@@ -13,6 +13,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -29,10 +30,11 @@ import java.util.List;
 public class CameraFragment extends Fragment {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
+    private static final String WAITING = "Waiting...";
     private static final String ARG_PARAM2 = "param2";
     private Camera camera;
     private CameraPreview cameraPreview;
+    private TextView resistanceTextView;
     private LineView lineView;
     private float height;
 
@@ -53,10 +55,6 @@ public class CameraFragment extends Fragment {
     // TODO: Rename and change types and number of parameters
     public static CameraFragment newInstance(String param1, String param2) {
         CameraFragment fragment = new CameraFragment();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
         return fragment;
     }
 
@@ -68,13 +66,13 @@ public class CameraFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
         }
         camera = getCameraInstance();
         setCamParameters(camera);
         height = 54;
         cameraPreview = new CameraPreview(getActivity(), camera,(int)height);
+
+
     }
 
     private void setCamParameters(Camera camera) {
@@ -92,13 +90,14 @@ public class CameraFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_camera, container, false);
-
-
+        TextView instructionsTextView = (TextView)view.findViewById(R.id.instructionsTextView);
         /*
         RelativeLayout.LayoutParams lineViewParams = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT,(int)height);
         lineViewParams.
         lineView.setLayoutParams(lineViewParams);
 */
+        resistanceTextView = (TextView)view.findViewById(R.id.resistanceTextView);
+        resistanceTextView.setText("\n"+WAITING+"\n");
 
         FrameLayout frameLayout = (FrameLayout)view.findViewById(R.id.camera_preview);
         FrameLayout.LayoutParams surfaceViewParams = new FrameLayout.LayoutParams(FrameLayout.LayoutParams.WRAP_CONTENT,FrameLayout.LayoutParams.WRAP_CONTENT);

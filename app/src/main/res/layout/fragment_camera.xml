@@ -16,20 +16,31 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:id="@+id/instructionsTextView"
         android:gravity="top|center"
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:text="@string/instructions"
         android:textSize="18dp"
         android:background="@color/background_floating_material_dark"
         android:textColor="@color/background_floating_material_light"
-        android:alpha="125"
-        android:id="@+id/textView" />
+        android:alpha="125" />
 
     <radiancetops.com.resistora.LineView
         android:layout_width="match_parent"
         android:id="@+id/lineView"
         android:layout_height="18dp"
         android:layout_centerInParent="true"/>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:layout_alignParentBottom="true"
+        android:gravity="center"
+        android:background="@color/background_floating_material_dark"
+        android:textColor="@color/background_floating_material_light"
+        android:textSize="18dp"
+        android:id="@+id/resistanceTextView" />
 
 
 </RelativeLayout>
