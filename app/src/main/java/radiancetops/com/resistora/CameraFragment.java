@@ -12,6 +12,7 @@ import android.view.Surface;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
+import android.widget.RelativeLayout;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -32,6 +33,8 @@ public class CameraFragment extends Fragment {
     private static final String ARG_PARAM2 = "param2";
     private Camera camera;
     private CameraPreview cameraPreview;
+    private LineView lineView;
+    private float height;
 
     // TODO: Rename and change types of parameters
     private String mParam1;
@@ -70,7 +73,8 @@ public class CameraFragment extends Fragment {
         }
         camera = getCameraInstance();
         setCamParameters(camera);
-        cameraPreview = new CameraPreview(getActivity(), camera);
+        height = 54;
+        cameraPreview = new CameraPreview(getActivity(), camera,height);
     }
 
     private void setCamParameters(Camera camera) {
@@ -88,10 +92,19 @@ public class CameraFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_camera, container, false);
+
+
+        /*
+        RelativeLayout.LayoutParams lineViewParams = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT,(int)height);
+        lineViewParams.
+        lineView.setLayoutParams(lineViewParams);
+*/
+
         FrameLayout frameLayout = (FrameLayout)view.findViewById(R.id.camera_preview);
         FrameLayout.LayoutParams surfaceViewParams = new FrameLayout.LayoutParams(FrameLayout.LayoutParams.WRAP_CONTENT,FrameLayout.LayoutParams.WRAP_CONTENT);
         cameraPreview.setLayoutParams(surfaceViewParams);
         frameLayout.addView(cameraPreview);
+        //Log.v("line dims", "height:" + lineView.getHeight());
         return view;
     }
 
