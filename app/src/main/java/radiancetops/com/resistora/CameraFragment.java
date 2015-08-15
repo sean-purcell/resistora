@@ -11,6 +11,7 @@ import android.view.LayoutInflater;
 import android.view.Surface;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -37,6 +38,7 @@ public class CameraFragment extends Fragment {
     private TextView resistanceTextView;
     private LineView lineView;
     private float height;
+    private Button singleButton;
 
     // TODO: Rename and change types of parameters
     private String mParam1;
@@ -96,6 +98,13 @@ public class CameraFragment extends Fragment {
         lineViewParams.
         lineView.setLayoutParams(lineViewParams);
 */
+        singleButton = (Button)view.findViewById(R.id.singleButton);
+        singleButton.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View view) {
+                cameraPreview.writeCSV();
+                Log.v("data","printing");
+            }
+        });
         resistanceTextView = (TextView)view.findViewById(R.id.resistanceTextView);
         resistanceTextView.setText("\n"+WAITING+"\n");
 

@@ -52,7 +52,12 @@ public class ImageHandler implements Camera.PreviewCallback {
             La[i] /= stripheight;
         }
     }
-	private void writeCSV () {
+	public void writeCSV () {
+        String csv = "";
+        for (int i = 0; i < width; i++) {
+            csv+=(Ha[i] + ","+ Sa[i]+ "," + La[i]+"\n");
+        }
+        /*
 		try {
 			PrintWriter pw = new PrintWriter(new FileWriter("data.csv"));
 			for (int i = 0; i < width; i++) {
@@ -60,6 +65,8 @@ public class ImageHandler implements Camera.PreviewCallback {
 			}
 			pw.close();
 		} catch (IOException e) {}
+		*/
+        Log.v("data",csv);
 	}
     private void decodeNV21(byte[] data, int width, int height) {
         final int frameSize = width * height;
