@@ -74,7 +74,7 @@ public class CameraFragment extends Fragment {
         camera = getCameraInstance();
         setCamParameters(camera);
         height = 54;
-        cameraPreview = new CameraPreview(getActivity(), camera,height);
+        cameraPreview = new CameraPreview(getActivity(), camera,(int)height);
     }
 
     private void setCamParameters(Camera camera) {
