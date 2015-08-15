@@ -64,6 +64,7 @@ public class CameraFragment extends Fragment {
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
         camera = getCameraInstance();
+        camera.setDisplayOrientation(90);
         cameraPreview = new CameraPreview(getActivity(), camera);
 
     }
@@ -74,6 +75,8 @@ public class CameraFragment extends Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_camera, container, false);
         FrameLayout frameLayout = (FrameLayout)view.findViewById(R.id.camera_preview);
+        FrameLayout.LayoutParams surfaceViewParams = new FrameLayout.LayoutParams(FrameLayout.LayoutParams.WRAP_CONTENT,FrameLayout.LayoutParams.WRAP_CONTENT);
+        cameraPreview.setLayoutParams(surfaceViewParams);
         frameLayout.addView(cameraPreview);
         return view;
     }
