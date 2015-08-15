@@ -47,6 +47,32 @@ public class ImageHandler implements Camera.PreviewCallback {
         avgImg();
 
         // Find the maxima
+        findMaxima();
+    }
+
+    private void findMaxima() {
+        int[] midx = new int[4];
+        for(int i = 7; i < this.width - 7; i++) {
+            boolean nvalid = false;
+            for(int j = i - 7; j <= i + 7; j++) {
+                if(i == j) continue;
+                if(diff[j] >= diff[i]) {
+                    nvalid = true;
+                    break;
+                }
+            }
+
+            if(!nvalid) {
+                if(diff[i] > diff[midx[3]]) {
+                    midx[3] = i;
+                    for(int i = 3; i >= 1; i--) {
+                        if(diff[midx[i]] > diff[midx[i-1]]) {
+                            int tmp = midx[i] + 
+                        }
+                    }
+                }
+            }
+        }
     }
 
     private void avgImg() {
@@ -68,7 +94,7 @@ public class ImageHandler implements Camera.PreviewCallback {
         double[] h = new double[width], s = new double[width], l = new double[width];
         int[] rgb = new int[width];
         for(int i = 0; i < width; i++) {
-                rgb[i] = this.rgb[i * stripheight + stripheight / 2];
+                rgb[i] = this.rgb[i + (stripheight / 2) * this.width];
             h[i] = Ha[i];
             s[i] = Sa[i];
             l[i] = La[i];
@@ -90,18 +116,18 @@ public class ImageHandler implements Camera.PreviewCallback {
 		*/
     }
 
-    private void decodeNV21(byte[] data, int width, int height) {
+    private void decodeNV21(byte[] data, int height, int width) {
         final int frameSize = width * height;
 
         int a = 0;
 
-        for (int j = 0; j < width; ++j) {
-            for (int i = height / 2 - stripheight / 2; i < height / 2 + stripheight / 2; ++i) {
-                int y = (0xff & ((int) data[j * height + i]));
+        for (int j = 0; j < this.width; ++j) {
+            for (int i = this.height / 2 - stripheight / 2; i < this.height / 2 + stripheight / 2; ++i) {
+                int y = (0xff & ((int) data[j * this.height + i]));
                 int v = (0xff & ((int) data[frameSize + (j >> 1) * width + (i & ~1) + 0]));
                 int u = (0xff & ((int) data[frameSize + (j >> 1) * width + (i & ~1) + 1]));
 
-                int rgb = this.rgb[a] = YUVtoRGB(y, u, v);
+                int rgb = this.rgb[i * this.width + j] = YUVtoRGB(y, u, v);
 
                 double r = (0xff & (rgb >> 16)) / 255.;
                 double g = (0xff & (rgb >>  8)) / 255.;
