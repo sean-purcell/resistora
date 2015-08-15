@@ -12,6 +12,8 @@ public class ImageHandler implements Camera.PreviewCallback {
 
     private double[] H, S, L;
 
+    private double[] Ha, Sa, La;
+
     public ImageHandler(int width, int height, int stripheight) {
         super();
 
@@ -19,23 +21,39 @@ public class ImageHandler implements Camera.PreviewCallback {
         this.height = height;
         this.stripheight = stripheight;
 
-        this.H = new double[width * height];
-        this.S = new double[width * height];
-        this.L = new double[width * height];
+        this.H = new double[width * stripheight];
+        this.S = new double[width * stripheight];
+        this.L = new double[width * stripheight];
+
+        this.Ha = new double[width];
+        this.Sa = new double[width];
+        this.La = new double[width];
     }
 
     @Override
     public void onPreviewFrame(byte[] data, Camera camera) {
+        // Decode the image data to HSL
         decodeNV21(data, width, height);
+
+        // Average data
+        avgImg();
+    }
+
+    private void avgImg() {
+        for(int i = 0; i < width; i++) {
+            for (int j = 0; j < stripheight; j++) {
+                Ha[i] += H[i + j * width];
+                Sa[i] += H[i + j * width];
+                La[i] += H[i + j * width];
+            }
+            Ha[i] /= stripheight;
+            Sa[i] /= stripheight;
+            La[i] /= stripheight;
+        }
     }
 
     private void decodeNV21(byte[] data, int width, int height) {
         final int frameSize = width * height;
-
-        final int ii = 0;
-        final int ij = 0;
-        final int di = +1;
-        final int dj = +1;
 
         int a = 0;
         for (int i = height / 2 - stripheight / 2; i < height / 2 + stripheight / 2; ++i) {
