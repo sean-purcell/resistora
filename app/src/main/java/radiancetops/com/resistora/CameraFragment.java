@@ -99,6 +99,7 @@ public class CameraFragment extends Fragment {
         lineView.setLayoutParams(lineViewParams);
 */
         singleButton = (Button)view.findViewById(R.id.singleButton);
+        singleButton.setVisibility(View.GONE);
         singleButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View view) {
                 cameraPreview.writeCSV();

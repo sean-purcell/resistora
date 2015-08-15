@@ -55,7 +55,24 @@ public class ImageHandler implements Camera.PreviewCallback {
     }
 
     private void colors(int[] idxs, int[] rgb) {
+        WIDTH = width;
+        HEIGHT = stripheight;
+        rgb1 = new int[WIDTH][HEIGHT];
+        output1 = new int[WIDTH][HEIGHT];
+        for(int i = 0; i < width; i++) {
+            for(int j = 0; j < stripheight; j++) {
+                rgb1[i][j] = rgb[j * width + i];
+            }
+        }
 
+        initializeColors();
+        normalizeSat();
+        avgColorStrip();
+        replaceColors();
+
+        for(int i = 0; i < idxs.length; i++) {
+            idxs[i] = rgb1[idxs[i]][0];
+        }
     }
 
     private void findMaxima() {
@@ -188,5 +205,176 @@ public class ImageHandler implements Camera.PreviewCallback {
         b = b < 0 ? 0 : (b > 255 ? 255 : b);
 
         return 0xff000000 | (r << 16) | (g << 8) | b;
+    }
+
+
+    private static int WIDTH, HEIGHT;
+    private static int[][] rgb1;
+    private static int[][] output1;
+    private static int[] presetRGB = new int[20];
+    private static double avgr, avgg, avgb, avgsat;
+
+    private static void initializeColors () {
+        presetRGB[0] = rgbToInt(0,0,0);
+        presetRGB[1] = rgbToInt(102, 51, 50);
+        presetRGB[2] = rgbToInt(255,0,0);
+        presetRGB[3] = rgbToInt(255, 102, 0);
+        presetRGB[4] = rgbToInt(255, 255, 0);
+        presetRGB[5] = rgbToInt(0, 255, 0);
+        presetRGB[6] = rgbToInt(0, 0, 255);
+        presetRGB[7] = rgbToInt(206, 101, 255);
+        presetRGB[8] = rgbToInt(130, 130, 130);
+        presetRGB[9] = rgbToInt(255, 255, 255);
+        presetRGB[10] = rgbToInt(205, 153, 51);
+        presetRGB[11] = rgbToInt(204, 204, 204);
+    }
+    private static void normalizeSat () {
+        avgsat = 0;
+        for (int i = 0; i < WIDTH; i++)
+            for (int j = 0; j < HEIGHT; j++)
+                avgsat += toHSL(new Tuple(getRed(rgb1[i][j]), getGreen(rgb1[i][j]), getBlue(rgb1[i][j]))).val[1];
+        avgsat /= HEIGHT * WIDTH;
+
+        for (int i = 0; i < WIDTH; i++) {
+            for (int j = 0; j < HEIGHT; j++) {
+                Tuple HSL = toHSL(new Tuple(getRed(rgb1[i][j]), getGreen(rgb1[i][j]), getBlue(rgb1[i][j])));
+                HSL.val[1] = Math.min(1.0, HSL.val[1] / avgsat / 2);
+                Tuple RGB = toRGB(HSL);
+                rgb1[i][j] = rgbToInt((int)RGB.val[0], (int)RGB.val[1], (int)RGB.val[2]);
+            }
+        }
+    }
+    private static void avgColorStrip () {
+        for (int i = 0; i < WIDTH; i++) {
+            avgr = 0;
+            avgg = 0;
+            avgb = 0;
+            for (int j = 0; j < HEIGHT; j++) {
+                avgr += getRed(rgb1[i][j]);
+                avgg += getGreen(rgb1[i][j]);
+                avgb += getBlue(rgb1[i][j]);
+            }
+            avgr /= HEIGHT;
+            avgg /= HEIGHT;
+            avgb /= HEIGHT;
+            for (int j = 0; j < HEIGHT; j++)
+                rgb1[i][j] = rgbToInt((int)avgr, (int)avgg, (int)avgb);
+        }
+    }
+    private static void replaceColors () {
+        for (int i = 0; i < WIDTH; i++) {
+            for (int j = 0; j < HEIGHT; j++) {
+                rgb1[i][j] = presetRGB[getResistorColor(rgb1[i][j])];
+                output1[i][j] = rgb1[i][j];
+            }
+        }
+    }
+    private static int getResistorColor (int rgb) {
+        int r = getRed(rgb);
+        int g = getGreen(rgb);
+        int b = getBlue(rgb);
+        Tuple HSL = toHSL(new Tuple(r, g, b));
+        // BLACK AND WHITE
+        if (HSL.val[2] < 0.13) return 0;
+        if (HSL.val[2] > 0.90) return 9;
+
+        if (Math.max(r, Math.max(g, b)) - Math.min(r,  Math.min(g,b)) < 10){
+            if ((r+g+b)/3 > 160) return 8;
+            else return 11;
+
+        }
+        if (HSL.val[0] > 0.95 || HSL.val[0] < 0.093){ // red,orange or brown
+            if (((HSL.val[2] < 0.32 || HSL.val[1]<0.51) && (HSL.val[0]>0.01 && HSL.val[0] < 0.04)) || ((HSL.val[2]<0.29 || HSL.val[1] < 0.42) && HSL.val[0]>=0.05 && HSL.val[0] <= 0.093)) return 1;
+            else if ( HSL.val[0]>0.9 || HSL.val[0] < 0.05) return 2;
+            else return 3;
+        }
+        if (HSL.val[0] >= 0.093 && HSL.val[0] < 0.21){
+            if (HSL.val[1] < 0.5 || HSL.val[2] < 0.27) return 10;
+            else return 4;
+        }
+
+        if (HSL.val[0] >= 0.21 && HSL.val[0] < 0.49)
+            return 5;
+        if (HSL.val[0] >= 0.49 && HSL.val[0] < 0.69)
+            return 6;
+        if (HSL.val[0]>=0.69 && HSL.val[0] <= 0.95)
+            return 7;
+
+        return 12;
+
+
+    }
+    // get the R value (0, 255) from a 32 bit integer
+    private static int getRed (int n) {
+        return 0xFF & (n >> 16);
+    }
+    // get the G value (0, 255) from a 32 bit integer
+    private static int getBlue (int n) {
+        return 0xFF & (n >> 0);
+    }
+    // get the B value (0, 255) from a 32 bit integer
+    private static int getGreen (int n) {
+        return 0xFF & (n >> 8);
+    }
+    private static Tuple toHSL (Tuple rgb) {
+        double r = rgb.val[0] / 255.0; // RED
+        double g = rgb.val[1] / 255.0; // GREEN
+        double b = rgb.val[2] / 255.0; // BLUE
+        double max = Math.max(r, Math.max(g, b));
+        double min = Math.min(r, Math.min(g, b));
+        double h = (max + min) / 2.0;
+        double s = (max + min) / 2.0;
+        double l = (max + min) / 2.0;
+        if (max == min) {
+            h = s = 0;
+        } else {
+            double d = max - min;
+            s = l > 0.5 ? d / (2.0 - max - min) : d / (max + min);
+            if (max == r) {
+                h = (g - b) / d + (g < b ? 6 : 0);
+            } else if (max == g) {
+                h = (b - r) / d + 2;
+            } else if (max == b) {
+                h = (r - g) / d + 4;
+            }
+            h /= 6.0;
+        }
+        return new Tuple(h, s, l);
+    }
+    private static int rgbToInt(int r, int g, int b){
+        int a = 255;
+        return (((a<<8)+r<<8)+g<<8)+b;
+    }
+    private static Tuple toRGB (Tuple HSL) {
+        double h = HSL.val[0];
+        double s = HSL.val[1];
+        double l = HSL.val[2];
+        double r = 0, g = 0, b = 0;
+        if (s == 0) {
+            r = g = b = 1;
+        } else {
+            double q = l < 0.5 ? l * (1 + s) : l + s - l * s;
+            double p = 2 * l - q;
+            r = hueToRGB(p, q, (h + 1.0d/3.0d));
+            g = hueToRGB(p, q, h);
+            b = hueToRGB(p, q, (h - 1.0d/3.0d));
+        }
+        return new Tuple(Math.round(r * 255), Math.round(g * 255), Math.round(b * 255));
+    }
+    private static double hueToRGB (double p, double q, double t) {
+        if(t < 0.0d) t += 1;
+        if(t > 1.0d) t -= 1;
+        if(t < 1.0d/6.0d) return p + (q - p) * 6 * t;
+        if(t < 1.0d/2.0d) return q;
+        if(t < 2.0d/3.0d) return p + (q - p) * (2.0/3.0 - t) * 6;
+        return p;
+    }
+    private static class Tuple {
+        double[] val;
+        Tuple (double... args) {
+            val = new double[args.length];
+            for (int i = 0; i < args.length; i++)
+                val[i] = args[i];
+        }
     }
 }
