@@ -12,8 +12,11 @@ public class ImageHandler implements Camera.PreviewCallback {
     private int width, height, stripheight;
 
     private double[] H, S, L;
+    private int[] rgb;
 
-    private double[] Ha, Sa, La;
+    private double[] Ha, Sa, La, diff;
+
+    private int[] idxs;
 
     public ImageHandler(int width, int height, int stripheight) {
         super();
@@ -29,6 +32,9 @@ public class ImageHandler implements Camera.PreviewCallback {
         this.Ha = new double[width];
         this.Sa = new double[width];
         this.La = new double[width];
+        this.diff = new double[width];
+
+        this.idxs = new int[4];
     }
 
     @Override
@@ -38,6 +44,8 @@ public class ImageHandler implements Camera.PreviewCallback {
 
         // Average data
         avgImg();
+
+        // Find the maxima
     }
 
     private void avgImg() {
@@ -50,9 +58,16 @@ public class ImageHandler implements Camera.PreviewCallback {
             Ha[i] /= stripheight;
             Sa[i] /= stripheight;
             La[i] /= stripheight;
+
+            diff[i] = Sa[i] - La[i];
         }
     }
-	private void writeCSV () {
+
+    private void findMaxima() {
+
+    }
+
+	public void writeCSV () {
 		try {
 			PrintWriter pw = new PrintWriter(new FileWriter("data.csv"));
 			for (int i = 0; i < width; i++) {
@@ -61,6 +76,7 @@ public class ImageHandler implements Camera.PreviewCallback {
 			pw.close();
 		} catch (IOException e) {}
 	}
+
     private void decodeNV21(byte[] data, int width, int height) {
         final int frameSize = width * height;
 
@@ -71,7 +87,7 @@ public class ImageHandler implements Camera.PreviewCallback {
                 int v = (0xff & ((int) data[frameSize + (i >> 1) * width + (j & ~1) + 0]));
                 int u = (0xff & ((int) data[frameSize + (i >> 1) * width + (j & ~1) + 1]));
 
-                int rgb = YUVtoRGB(y, u, v);
+                int rgb = this.rgb[a] = YUVtoRGB(y, u, v);
 
                 int r = 0xff & (rgb >> 16);
                 int g = 0xff & (rgb >>  8);
@@ -95,6 +111,7 @@ public class ImageHandler implements Camera.PreviewCallback {
                     }
                     H[a] /= 6;
                 }
+                a++;
             }
         }
     }
