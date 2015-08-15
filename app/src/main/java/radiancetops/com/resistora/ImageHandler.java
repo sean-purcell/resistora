@@ -2,6 +2,7 @@ package radiancetops.com.resistora;
 
 import android.hardware.Camera;
 import android.util.Log;
+import java.io.*;
 
 /**
  * Created by Sean on 15-08-15.
@@ -51,7 +52,15 @@ public class ImageHandler implements Camera.PreviewCallback {
             La[i] /= stripheight;
         }
     }
-
+	private void writeCSV () {
+		try {
+			PrintWriter pw = new PrintWriter(new FileWriter("data.csv"));
+			for (int i = 0; i < width; i++) {
+				pw.println(Ha[i] + ","+ Sa[i]+ "," + La[i]);
+			}
+			pw.close();
+		} catch (IOException e) {}
+	}
     private void decodeNV21(byte[] data, int width, int height) {
         final int frameSize = width * height;
 
