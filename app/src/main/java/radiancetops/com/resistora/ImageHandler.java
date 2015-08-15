@@ -68,14 +68,16 @@ public class ImageHandler implements Camera.PreviewCallback {
         double[] h = new double[width], s = new double[width], l = new double[width];
         int[] rgb = new int[width];
         for(int i = 0; i < width; i++) {
-            h[i] = Ha[i]; s[i] = Sa[i]; l[i] = La[i];
-            rgb[i] = this.rgb[i];
+                rgb[i] = this.rgb[i * stripheight + stripheight / 2];
+            h[i] = Ha[i];
+            s[i] = Sa[i];
+            l[i] = La[i];
         }
         String csv = "";
         Log.v("data", "w: " + width);
         for (int i = 0; i < width; i++) {
             //Log.v("data", h[i] + ","+ s[i]+ "," + l[i]);
-            Log.v("rgb", (0xff & (rgb[i] >> 16)) + "," + (0xff & (rgb[i] >> 8)) + "," + (0xff & (rgb[i])));
+            Log.v("rgb", i + "," + (0xff & (rgb[i] >> 16)) + "," + (0xff & (rgb[i] >> 8)) + "," + (0xff & (rgb[i])));
         }
         /*
 		try {
@@ -95,7 +97,7 @@ public class ImageHandler implements Camera.PreviewCallback {
 
         for (int j = 0; j < width; ++j) {
             for (int i = height / 2 - stripheight / 2; i < height / 2 + stripheight / 2; ++i) {
-                int y = (0xff & ((int) data[j * height + j]));
+                int y = (0xff & ((int) data[j * height + i]));
                 int v = (0xff & ((int) data[frameSize + (j >> 1) * width + (i & ~1) + 0]));
                 int u = (0xff & ((int) data[frameSize + (j >> 1) * width + (i & ~1) + 1]));
 
