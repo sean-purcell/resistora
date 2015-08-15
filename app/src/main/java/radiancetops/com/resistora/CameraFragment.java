@@ -88,6 +88,13 @@ public class CameraFragment extends Fragment {
         }
     }
 
+    private void releaseCamera(){
+        if (camera != null){
+            camera.release();        // release the camera for other applications
+            camera = null;
+        }
+    }
+
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
@@ -105,6 +112,21 @@ public class CameraFragment extends Fragment {
         mListener = null;
     }
 
+    @Override
+    public void onPause() {
+        super.onPause();
+        releaseCamera();
+    }
+    @Override
+    public void onResume() {
+        super.onResume();
+        camera = getCameraInstance();
+    }
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        releaseCamera();
+    }
     public static Camera getCameraInstance(){
         Camera c = null;
         try {

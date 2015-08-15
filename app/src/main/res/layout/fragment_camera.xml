@@ -1,8 +1,29 @@
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/camera_preview"
-    xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
-    android:layout_height="match_parent" tools:context="radiancetops.com.resistora.CameraFragment">
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/relativeLayout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context="radiancetops.com.resistora.CameraFragment">
+
+    <FrameLayout
+        android:id="@+id/camera_preview"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" >
+    </FrameLayout>
 
 
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="top|center"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="@string/instructions"
+        android:textSize="18dp"
+        android:background="@color/background_floating_material_dark"
+        android:textColor="@color/background_floating_material_light"
+        android:alpha="125"
+        android:id="@+id/textView" />
 
-</FrameLayout>
+
+</RelativeLayout>
