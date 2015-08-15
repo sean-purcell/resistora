@@ -1,15 +1,20 @@
 package radiancetops.com.resistora;
 
 import android.app.Activity;
+import android.graphics.Rect;
 import android.hardware.Camera;
 import android.net.Uri;
 import android.os.Bundle;
 import android.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Surface;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
+
+import java.util.ArrayList;
+import java.util.List;
 
 
 /**
@@ -64,9 +69,18 @@ public class CameraFragment extends Fragment {
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
         camera = getCameraInstance();
-        camera.setDisplayOrientation(90);
+        setCamParameters(camera);
         cameraPreview = new CameraPreview(getActivity(), camera);
+    }
 
+    private void setCamParameters(Camera camera) {
+        camera.setDisplayOrientation(90);
+        Camera.Parameters p = camera.getParameters();
+        p.setFocusMode(Camera.Parameters.FOCUS_MODE_CONTINUOUS_PICTURE);
+        camera.setParameters(p);
+        int w = p.getPreviewSize().width;
+        int h = p.getPreviewSize().height;
+        Log.d("CameraFragment", "w: " + w + " h: " + h);
     }
 
     @Override
