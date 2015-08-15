@@ -1,6 +1,7 @@
 package radiancetops.com.resistora;
 
 import android.hardware.Camera;
+import android.util.Log;
 
 /**
  * Created by Sean on 15-08-15.
@@ -24,6 +25,7 @@ public class ImageHandler implements Camera.PreviewCallback {
 
     @Override
     public void onPreviewFrame(byte[] data, Camera camera) {
+        Log.d("ImHandler", "Frame received");
         decodeNV21(data, width, height);
     }
 
