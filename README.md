@@ -11,6 +11,10 @@ Jeffrey Xiao
 
 Ben Zhang
 
+#Honourary Member
+
+Yves Li
+
 #Notes
 Color recognition is still a bit shaky and will have to be improved. 
 
