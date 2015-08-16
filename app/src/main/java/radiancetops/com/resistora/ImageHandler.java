@@ -80,7 +80,8 @@ public class ImageHandler implements Camera.PreviewCallback {
             idxs[i] = rgb1[idxs[i]][0];
         }
 
-        rtv.setText("\n" + resistanceValue(idxs[0], idxs[1], idxs[2], idxs[3]) + "\n");
+        rtv.setText("\n" + resistanceValue(idxs[0], idxs[1], idxs[2], idxs[3]) + "\n" + idxs[0] + " " + idxs[1] + " " + idxs[2] + " " + idxs[3]);
+        //rtv.setText(idxs[0] + " " + idxs[1] + " " + idxs[2] + " " + idxs[3]);
     }
 
     private  String resistanceValue (int a, int b, int c, int tolerance){
@@ -91,12 +92,12 @@ public class ImageHandler implements Camera.PreviewCallback {
 
 
         if (a == 10) a = 1;
-        if (b == 10) b = 1;
+        if (b == 10) b = 4;
         if (a == 11) a = 8;
         if (b == 11) b = 8;
 
 
-        int resistance = (int)((10 * b + a)*Math.pow(10,c));
+        int resistance = (int)((10 * a + b)*Math.pow(10,c));
         String value = "\n" + resistance;
 
         if (tolerance == 8){
@@ -104,7 +105,15 @@ public class ImageHandler implements Camera.PreviewCallback {
         }
         else tolerance = 10;
 
-        value+= " ± " + (int)(((int)(tolerance * resistance)*1.0)/100) + "Ω\n";
+        double mult = 1;
+
+        if(tolerance == GOLD) {
+            mult = 0.05;
+        } else {
+            mult = 0.1;
+        }
+
+        value+= " ± " + (int)(mult * resistance) + "Ω\n";
         return value;
     }
 
@@ -297,7 +306,7 @@ public class ImageHandler implements Camera.PreviewCallback {
     private static void replaceColors () {
         for (int i = 0; i < WIDTH; i++) {
             for (int j = 0; j < HEIGHT; j++) {
-                rgb1[i][j] = presetRGB[getResistorColor(rgb1[i][j])];
+                rgb1[i][j] = getResistorColor(rgb1[i][j]);
                 output1[i][j] = rgb1[i][j];
             }
         }
