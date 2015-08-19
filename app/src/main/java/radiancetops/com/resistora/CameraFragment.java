@@ -35,6 +35,7 @@ public class CameraFragment extends Fragment {
     private static final String ARG_PARAM2 = "param2";
     private Camera camera;
     private CameraPreview cameraPreview;
+    private MarkerView markerView;
     private TextView resistanceTextView;
     private LineView lineView;
     private float height;
@@ -107,9 +108,11 @@ public class CameraFragment extends Fragment {
             }
         });
         resistanceTextView = (TextView)view.findViewById(R.id.resistanceTextView);
-        resistanceTextView.setText("\n"+WAITING+"\n");
+        resistanceTextView.setText("\n" + WAITING + "\n");
 
-        cameraPreview = new CameraPreview(getActivity(), camera,(int)height, resistanceTextView);
+        markerView = (MarkerView)view.findViewById(R.id.markerView);
+
+        cameraPreview = new CameraPreview(getActivity(), camera,(int)height, resistanceTextView,markerView);
 
         FrameLayout frameLayout = (FrameLayout)view.findViewById(R.id.camera_preview);
         FrameLayout.LayoutParams surfaceViewParams = new FrameLayout.LayoutParams(FrameLayout.LayoutParams.WRAP_CONTENT,FrameLayout.LayoutParams.WRAP_CONTENT);
