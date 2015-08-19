@@ -58,6 +58,8 @@ public class ImageHandler implements Camera.PreviewCallback {
         findMaxima();
 
         colors(idxs, rgb);
+
+        camera.addCallbackBuffer(data);
     }
 
     private void colors(int[] idxs, int[] rgb) {

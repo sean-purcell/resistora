@@ -72,15 +72,11 @@ public class CameraFragment extends Fragment {
         camera = getCameraInstance();
         setCamParameters(camera);
         height = 54;
-
-
     }
 
     private void setCamParameters(Camera camera) {
         camera.setDisplayOrientation(90);
         Camera.Parameters p = camera.getParameters();
-        p.setFocusMode(Camera.Parameters.FOCUS_MODE_CONTINUOUS_PICTURE);
-        p.setFlashMode(Camera.Parameters.FLASH_MODE_TORCH);
         camera.setParameters(p);
         int w = p.getPreviewSize().width;
         int h = p.getPreviewSize().height;
@@ -152,25 +148,22 @@ public class CameraFragment extends Fragment {
 
     @Override
     public void onPause() {
-        super.onPause();
-        Camera.Parameters p = camera.getParameters();
-        p.setFlashMode(Camera.Parameters.FLASH_MODE_OFF);
-        camera.setParameters(p);
         releaseCamera();
+        super.onPause();
     }
+
     @Override
     public void onResume() {
         super.onResume();
         camera = getCameraInstance();
     }
+
     @Override
     public void onDestroy() {
-        super.onDestroy();
-        Camera.Parameters p = camera.getParameters();
-        p.setFlashMode(Camera.Parameters.FLASH_MODE_OFF);
-        camera.setParameters(p);
         releaseCamera();
+        super.onDestroy();
     }
+
     public static Camera getCameraInstance(){
         Camera c = null;
         try {

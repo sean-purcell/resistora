@@ -5,6 +5,7 @@ package radiancetops.com.resistora;
  */
 
 import android.content.Context;
+import android.graphics.ImageFormat;
 import android.hardware.Camera;
 import android.util.Log;
 import android.view.Surface;
@@ -25,6 +26,7 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
     private Context context;
 
     private ImageHandler handler;
+    private byte[] handleBuffer;
 
     public CameraPreview(Context context, Camera camera, int stripheight, TextView t) {
         super(context);
@@ -33,6 +35,8 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
 
         Camera.Size size = mCamera.getParameters().getPreviewSize();
         this.handler = new ImageHandler(size.width, size.height, stripheight, t);
+        int bufsize = size.width * size.height * 3;
+        handleBuffer = new byte[bufsize];
 
         // Install a SurfaceHolder.Callback so we get notified when the
         // underlying surface is created and destroyed.
@@ -48,7 +52,8 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
         // The Surface has been created, now tell the camera where to draw the preview.
         try {
             mCamera.setPreviewDisplay(holder);
-            mCamera.setPreviewCallback(handler);
+            mCamera.addCallbackBuffer(handleBuffer);
+            mCamera.setPreviewCallbackWithBuffer(handler);
             mCamera.startPreview();
         } catch (IOException e) {
             Log.d(TAG, "Error setting camera preview: " + e.getMessage());
@@ -81,8 +86,9 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
         // start preview with new settings
         try {
             mCamera.setPreviewDisplay(mHolder);
+            mCamera.addCallbackBuffer(handleBuffer);
+            mCamera.setPreviewCallbackWithBuffer(handler);
             mCamera.startPreview();
-
         } catch (Exception e){
             Log.d(TAG, "Error starting camera preview: " + e.getMessage());
         }
