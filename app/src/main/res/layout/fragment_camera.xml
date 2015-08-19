@@ -48,5 +48,10 @@
         android:text="New Button"
         android:id="@+id/singleButton" />
 
+    <radiancetops.com.resistora.MarkerView
+        android:layout_width="match_parent"
+        android:id="@+id/markerView"
+        android:layout_height="28dp"
+        android:layout_centerInParent="true"/>
 
 </RelativeLayout>

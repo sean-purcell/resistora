@@ -28,13 +28,13 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
     private ImageHandler handler;
     private byte[] handleBuffer;
 
-    public CameraPreview(Context context, Camera camera, int stripheight, TextView t) {
+    public CameraPreview(Context context, Camera camera, int stripheight, TextView t,MarkerView m) {
         super(context);
         mCamera = camera;
         this.context = context;
 
         Camera.Size size = mCamera.getParameters().getPreviewSize();
-        this.handler = new ImageHandler(size.width, size.height, stripheight, t);
+        this.handler = new ImageHandler(size.width, size.height, stripheight, t,m);
         int bufsize = size.width * size.height * 3;
         handleBuffer = new byte[bufsize];
 

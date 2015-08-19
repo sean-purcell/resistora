@@ -5,6 +5,7 @@ import android.util.Log;
 import android.widget.TextView;
 
 import java.io.*;
+import java.util.ArrayList;
 import java.util.Arrays;
 
 /**
@@ -23,8 +24,9 @@ public class ImageHandler implements Camera.PreviewCallback {
 
 
     TextView rtv;
+    MarkerView markerTextView;
 
-    public ImageHandler(int width, int height, int stripheight, TextView rtv) {
+    public ImageHandler(int width, int height, int stripheight, TextView rtv,MarkerView markerView) {
         super();
 
         this.width = height;
@@ -43,6 +45,8 @@ public class ImageHandler implements Camera.PreviewCallback {
 
         this.idxs = new int[4];
         this.rtv = rtv;
+
+        this.markerTextView = markerView;
     }
 
     @Override
@@ -63,6 +67,7 @@ public class ImageHandler implements Camera.PreviewCallback {
     }
 
     private void colors(int[] idxs, int[] rgb) {
+        markerTextView.setBandLocation(idxs);
         WIDTH = width;
         HEIGHT = stripheight;
         rgb1 = new int[WIDTH][HEIGHT];
