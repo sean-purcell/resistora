@@ -89,7 +89,7 @@ public class ImageHandler implements Camera.PreviewCallback {
             idxs[i] = rgb1[width - idxs[i] - 1][0];
         }
 
-        rtv.setText("\n" + resistanceValue(idxs[0], idxs[1], idxs[2], idxs[3]) + "\n" + idxs[0] + " " + idxs[1] + " " + idxs[2] + " " + idxs[3]);
+        rtv.setText("\n" + resistanceValue(idxs[3], idxs[2], idxs[1], idxs[0]) + "\n" + idxs[0] + " " + idxs[1] + " " + idxs[2] + " " + idxs[3]);
         //rtv.setText(idxs[0] + " " + idxs[1] + " " + idxs[2] + " " + idxs[3]);
     }
 
