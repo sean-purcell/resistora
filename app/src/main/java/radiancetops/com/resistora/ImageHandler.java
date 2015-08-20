@@ -63,11 +63,12 @@ public class ImageHandler implements Camera.PreviewCallback {
 
         colors(idxs, rgb);
 
+        markerTextView.setBandLocation(idxs);
+
         camera.addCallbackBuffer(data);
     }
 
     private void colors(int[] idxs, int[] rgb) {
-        markerTextView.setBandLocation(idxs);
         WIDTH = width;
         HEIGHT = stripheight;
         rgb1 = new int[WIDTH][HEIGHT];
@@ -84,7 +85,8 @@ public class ImageHandler implements Camera.PreviewCallback {
         replaceColors();
 
         for(int i = 0; i < idxs.length; i++) {
-            idxs[i] = rgb1[idxs[i]][0];
+            /* image is reversed due to rotation */
+            idxs[i] = rgb1[width - idxs[i] - 1][0];
         }
 
         rtv.setText("\n" + resistanceValue(idxs[0], idxs[1], idxs[2], idxs[3]) + "\n" + idxs[0] + " " + idxs[1] + " " + idxs[2] + " " + idxs[3]);
@@ -153,7 +155,8 @@ public class ImageHandler implements Camera.PreviewCallback {
         Log.v("idx", midx[0] + " " + midx[1] + " " + midx[2] + " " + midx[3]);
 
         for(int i = 0; i < 4; i++) {
-            idxs[i] = midx[i];
+            /* the image is reversed due to the rotation */
+            idxs[i] = width - midx[i] - 1;
         }
 
         Arrays.sort(idxs);
