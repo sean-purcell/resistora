@@ -299,6 +299,31 @@ public class ImageHandler implements Camera.PreviewCallback {
             }
         }
     }
+
+    private static void normalizeGray(){
+        double avgR = 0, avgB = 0, avgG = 0;
+        for (int i = 0; i<WIDTH; i++){
+            for (int j = 0; j<HEIGHT; j++){
+                avgR += getRed(rgb1[i][j]);
+                avgB += getBlue(rgb1[i][j]);
+                avgG += getGreen(rgb1[i][j]);
+            }
+        }
+        avgR /= HEIGHT*WIDTH;
+        avgB /= HEIGHT*WIDTH;
+        avgG /= HEIGHT*WIDTH;
+
+        for (int i = 0; i<WIDTH; i++){
+            for (int j = 0; j<HEIGHT; j++){
+                int tr = (int)(getRed(rgb1[i][j])/avgR*128);
+                int tg = (int)(getGreen(rgb1[i][j])/avgG*128);
+                int tb = (int)(getBlue(rgb1[i][j])/avgB*128);
+
+                rgb1[i][j] = rgbToInt( Math.max(0,Math.min(255,tr)), Math.max(0,Math.min(255,tg)),Math.max(0,Math.min(255,tb)));
+            }
+        }
+    }
+
     private static void avgColorStrip () {
         for (int i = 0; i < WIDTH; i++) {
             avgr = 0;
@@ -432,4 +457,6 @@ public class ImageHandler implements Camera.PreviewCallback {
                 val[i] = args[i];
         }
     }
+
+
 }
