@@ -83,13 +83,12 @@ public class ImageHandler implements Camera.PreviewCallback {
         initializeColors();
         normalizeSat();
         avgColorStrip();
-        replaceColors();
 
         int[] cols = new int[4];
 
         for(int i = 0; i < idxs.length; i++) {
             /* image is reversed due to rotation */
-            cols[i] = rgb1[width - idxs[i] - 1][0];
+            cols[i] = getResistorColor(rgb1[width - idxs[i] - 1][0]);
         }
 
         rtv.setText("\n" + resistanceValue(cols[3], cols[2], cols[1], cols[0]) + "\n" + idxs[0] + " " + idxs[1] + " " + idxs[2] + " " + idxs[3]);
