@@ -22,6 +22,7 @@ public class ImageHandler implements Camera.PreviewCallback {
 
     private int[] idxs;
 
+	private static double h, s, l, r, g, b;
 
     TextView rtv;
     MarkerView markerTextView;
@@ -83,13 +84,12 @@ public class ImageHandler implements Camera.PreviewCallback {
         initializeColors();
         normalizeSat();
         avgColorStrip();
-        replaceColors();
 
         int[] cols = new int[4];
 
         for(int i = 0; i < idxs.length; i++) {
             /* image is reversed due to rotation */
-            cols[i] = rgb1[width - idxs[i] - 1][0];
+            cols[i] = getResistorColor(rgb1[width - idxs[i] - 1][0]);
         }
 
         rtv.setText("\n" + resistanceValue(cols[3], cols[2], cols[1], cols[0]) + "\n" + idxs[0] + " " + idxs[1] + " " + idxs[2] + " " + idxs[3]);
@@ -286,16 +286,19 @@ public class ImageHandler implements Camera.PreviewCallback {
     private static void normalizeSat () {
         avgsat = 0;
         for (int i = 0; i < WIDTH; i++)
-            for (int j = 0; j < HEIGHT; j++)
-                avgsat += toHSL(new Tuple(getRed(rgb1[i][j]), getGreen(rgb1[i][j]), getBlue(rgb1[i][j]))).val[1];
+            for (int j = 0; j < HEIGHT; j++) {
+				toHSL(getRed(rgb1[i][j]), getGreen(rgb1[i][j]), getBlue(rgb1[i][j]));
+				avgsat += s;
+			}
         avgsat /= HEIGHT * WIDTH;
+		
 
         for (int i = 0; i < WIDTH; i++) {
             for (int j = 0; j < HEIGHT; j++) {
-                Tuple HSL = toHSL(new Tuple(getRed(rgb1[i][j]), getGreen(rgb1[i][j]), getBlue(rgb1[i][j])));
-                HSL.val[1] = Math.min(1.0, HSL.val[1] / avgsat / 2);
-                Tuple RGB = toRGB(HSL);
-                rgb1[i][j] = rgbToInt((int)RGB.val[0], (int)RGB.val[1], (int)RGB.val[2]);
+                toHSL(getRed(rgb1[i][j]), getGreen(rgb1[i][j]), getBlue(rgb1[i][j]));
+                s = Math.min(1.0, s / avgsat / 2);
+                toRGB(h, s, l);
+                rgb1[i][j] = rgbToInt((int)r, (int)g, (int)b);
             }
         }
     }
@@ -353,31 +356,31 @@ public class ImageHandler implements Camera.PreviewCallback {
         int r = getRed(rgb);
         int g = getGreen(rgb);
         int b = getBlue(rgb);
-        Tuple HSL = toHSL(new Tuple(r, g, b));
+        toHSL(r, g, b);
         // BLACK AND WHITE
-        if (HSL.val[2] < 0.13) return 0;
-        if (HSL.val[2] > 0.90) return 9;
+        if (l < 0.13) return 0;
+        if (l > 0.90) return 9;
 
         if (Math.max(r, Math.max(g, b)) - Math.min(r,  Math.min(g,b)) < 10){
             if ((r+g+b)/3 > 160) return 8;
             else return 11;
 
         }
-        if (HSL.val[0] > 0.95 || HSL.val[0] < 0.093){ // red,orange or brown
-            if (((HSL.val[2] < 0.32 || HSL.val[1]<0.51) && (HSL.val[0]>0.01 && HSL.val[0] < 0.04)) || ((HSL.val[2]<0.29 || HSL.val[1] < 0.42) && HSL.val[0]>=0.05 && HSL.val[0] <= 0.093)) return 1;
-            else if ( HSL.val[0]>0.9 || HSL.val[0] < 0.05) return 2;
+        if (h > 0.95 || h < 0.093){ // red,orange or brown
+            if (((l < 0.32 || s<0.51) && (h>0.01 && h < 0.04)) || ((l<0.29 || s < 0.42) && h>=0.05 && h <= 0.093)) return 1;
+            else if ( h>0.9 || h < 0.05) return 2;
             else return 3;
         }
-        if (HSL.val[0] >= 0.093 && HSL.val[0] < 0.21){
-            if (HSL.val[1] < 0.5 || HSL.val[2] < 0.27) return 10;
+        if (h >= 0.093 && h < 0.21){
+            if (s < 0.5 || l < 0.27) return 10;
             else return 4;
         }
 
-        if (HSL.val[0] >= 0.21 && HSL.val[0] < 0.49)
+        if (h >= 0.21 && h < 0.49)
             return 5;
-        if (HSL.val[0] >= 0.49 && HSL.val[0] < 0.69)
+        if (h >= 0.49 && h < 0.69)
             return 6;
-        if (HSL.val[0]>=0.69 && HSL.val[0] <= 0.95)
+        if (h>=0.69 && h <= 0.95)
             return 7;
 
         return 12;
@@ -396,15 +399,15 @@ public class ImageHandler implements Camera.PreviewCallback {
     private static int getGreen (int n) {
         return 0xFF & (n >> 8);
     }
-    private static Tuple toHSL (Tuple rgb) {
-        double r = rgb.val[0] / 255.0; // RED
-        double g = rgb.val[1] / 255.0; // GREEN
-        double b = rgb.val[2] / 255.0; // BLUE
+    private static Tuple toHSL (double r, double g, double b) {
+        r = r / 255.0; // RED
+        g = g / 255.0; // GREEN
+        b = b / 255.0; // BLUE
         double max = Math.max(r, Math.max(g, b));
         double min = Math.min(r, Math.min(g, b));
-        double h = (max + min) / 2.0;
-        double s = (max + min) / 2.0;
-        double l = (max + min) / 2.0;
+        h = (max + min) / 2.0;
+        s = (max + min) / 2.0;
+        l = (max + min) / 2.0;
         if (max == min) {
             h = s = 0;
         } else {
@@ -419,16 +422,12 @@ public class ImageHandler implements Camera.PreviewCallback {
             }
             h /= 6.0;
         }
-        return new Tuple(h, s, l);
     }
     private static int rgbToInt(int r, int g, int b){
         int a = 255;
         return (((a<<8)+r<<8)+g<<8)+b;
     }
-    private static Tuple toRGB (Tuple HSL) {
-        double h = HSL.val[0];
-        double s = HSL.val[1];
-        double l = HSL.val[2];
+    private static Tuple toRGB (double h, double s, double l) {
         double r = 0, g = 0, b = 0;
         if (s == 0) {
             r = g = b = 1;
@@ -439,7 +438,9 @@ public class ImageHandler implements Camera.PreviewCallback {
             g = hueToRGB(p, q, h);
             b = hueToRGB(p, q, (h - 1.0d/3.0d));
         }
-        return new Tuple(Math.round(r * 255), Math.round(g * 255), Math.round(b * 255));
+        r = Math.round(r * 255);
+		g = Math.round(g * 255);
+		b = Math.round(b * 255);
     }
     private static double hueToRGB (double p, double q, double t) {
         if(t < 0.0d) t += 1;
@@ -449,14 +450,4 @@ public class ImageHandler implements Camera.PreviewCallback {
         if(t < 2.0d/3.0d) return p + (q - p) * (2.0/3.0 - t) * 6;
         return p;
     }
-    private static class Tuple {
-        double[] val;
-        Tuple (double... args) {
-            val = new double[args.length];
-            for (int i = 0; i < args.length; i++)
-                val[i] = args[i];
-        }
-    }
-
-
 }
