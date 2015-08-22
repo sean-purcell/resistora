@@ -166,8 +166,9 @@ public class CameraFragment extends Fragment {
 
     @Override
     public void onPause() {
-        releaseCamera();
         super.onPause();
+        getActivity().finish();
+        System.exit(0);
     }
 
     @Override
