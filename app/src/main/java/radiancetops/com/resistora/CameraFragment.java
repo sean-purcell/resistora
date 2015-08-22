@@ -8,12 +8,10 @@ import android.os.Bundle;
 import android.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.Surface;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.FrameLayout;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import java.util.ArrayList;
@@ -38,7 +36,7 @@ public class CameraFragment extends Fragment {
     private MarkerView markerView;
     private TextView resistanceTextView;
     private LineView lineView;
-    private float height;
+    private float stripheight;
     private Button singleButton;
 
     // TODO: Rename and change types of parameters
@@ -70,18 +68,35 @@ public class CameraFragment extends Fragment {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
         }
+        stripheight = 54;
         camera = getCameraInstance();
         setCamParameters(camera);
-        height = 54;
     }
 
     private void setCamParameters(Camera camera) {
         camera.setDisplayOrientation(90);
         Camera.Parameters p = camera.getParameters();
-        camera.setParameters(p);
+        p.setFocusMode(p.FOCUS_MODE_AUTO);
         int w = p.getPreviewSize().width;
         int h = p.getPreviewSize().height;
         Log.d("CameraFragment", "w: " + w + " h: " + h);
+
+        /* set focus areas */
+        if(p.getMaxNumFocusAreas() > 0) {
+            Log.d("CameraFragment", "max focus areas: " + p.getMaxNumFocusAreas());
+            List<Camera.Area> areas = new ArrayList<>();
+            Rect r = new Rect(
+                    (int) (w / 3), (int) (h / 2 - stripheight / 2), (int) (w * 2 / 3),
+                    (int) (h / 2 + stripheight / 2));
+            Log.d("CameraFragment", "rect: " + r.flattenToString());
+            areas.add(new Camera.Area(r, 1));
+            p.setFocusAreas(areas);
+
+            for(String s : p.getSupportedFocusModes()) {
+                Log.d("CameraFragment", "focus mode: " + s);
+            }
+        }
+        camera.setParameters(p);
     }
 
     @Override
@@ -91,7 +106,7 @@ public class CameraFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_camera, container, false);
         TextView instructionsTextView = (TextView)view.findViewById(R.id.instructionsTextView);
         /*
-        RelativeLayout.LayoutParams lineViewParams = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT,(int)height);
+        RelativeLayout.LayoutParams lineViewParams = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT,(int)stripheight);
         lineViewParams.
         lineView.setLayoutParams(lineViewParams);
 */
@@ -108,13 +123,13 @@ public class CameraFragment extends Fragment {
 
         markerView = (MarkerView)view.findViewById(R.id.markerView);
 
-        cameraPreview = new CameraPreview(getActivity(), camera,(int)height, resistanceTextView,markerView);
+        cameraPreview = new CameraPreview(getActivity(), camera,(int) stripheight, resistanceTextView,markerView);
 
         FrameLayout frameLayout = (FrameLayout)view.findViewById(R.id.camera_preview);
         FrameLayout.LayoutParams surfaceViewParams = new FrameLayout.LayoutParams(FrameLayout.LayoutParams.WRAP_CONTENT,FrameLayout.LayoutParams.WRAP_CONTENT);
         cameraPreview.setLayoutParams(surfaceViewParams);
         frameLayout.addView(cameraPreview);
-        //Log.v("line dims", "height:" + lineView.getHeight());
+        //Log.v("line dims", "line view height:" + lineView.getHeight());
         return view;
     }
 

@@ -66,6 +66,7 @@ public class ImageHandler implements Camera.PreviewCallback {
         markerTextView.setBandLocation(idxs);
 
         camera.addCallbackBuffer(data);
+        camera.autoFocus(null);
     }
 
     private void colors(int[] idxs, int[] rgb) {
