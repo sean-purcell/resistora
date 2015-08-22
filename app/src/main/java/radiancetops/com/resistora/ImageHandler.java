@@ -353,9 +353,9 @@ public class ImageHandler implements Camera.PreviewCallback {
         }
     }
     private static int getResistorColor (int rgb) {
-        int r = getRed(rgb);
-        int g = getGreen(rgb);
-        int b = getBlue(rgb);
+        r = getRed(rgb);
+        g = getGreen(rgb);
+        b = getBlue(rgb);
         toHSL(r, g, b);
         // BLACK AND WHITE
         if (l < 0.13) return 0;
