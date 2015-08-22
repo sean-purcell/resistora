@@ -1,12 +1,14 @@
 package radiancetops.com.resistora;
 
 import android.app.Activity;
+import android.content.res.Resources;
 import android.graphics.Rect;
 import android.hardware.Camera;
 import android.net.Uri;
 import android.os.Bundle;
 import android.app.Fragment;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -73,7 +75,7 @@ public class CameraFragment extends Fragment {
     private void setCamParameters(Camera camera) {
         camera.setDisplayOrientation(90);
         Camera.Parameters p = camera.getParameters();
-        p.setFocusMode(p.FOCUS_MODE_AUTO);
+        p.setFocusMode(p.FOCUS_MODE_CONTINUOUS_PICTURE);
         int w = p.getPreviewSize().width;
         int h = p.getPreviewSize().height;
         Log.d("CameraFragment", "w: " + w + " h: " + h);
@@ -168,7 +170,10 @@ public class CameraFragment extends Fragment {
     public void onResume() {
         super.onResume();
         camera = getCameraInstance();
-        stripheight = markerView.getHeight();
+
+        Resources r = getResources();
+        stripheight = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 14, r.getDisplayMetrics());
+
         Log.v("CameraFragment", "stripheight: " + stripheight);
         setCamParameters(camera);
         cameraPreview.initVals(camera, (int) stripheight, resistanceTextView, markerView);
