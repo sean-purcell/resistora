@@ -399,7 +399,7 @@ public class ImageHandler implements Camera.PreviewCallback {
     private static int getGreen (int n) {
         return 0xFF & (n >> 8);
     }
-    private static Tuple toHSL (double r, double g, double b) {
+    private static void toHSL (double r, double g, double b) {
         r = r / 255.0; // RED
         g = g / 255.0; // GREEN
         b = b / 255.0; // BLUE
@@ -427,7 +427,7 @@ public class ImageHandler implements Camera.PreviewCallback {
         int a = 255;
         return (((a<<8)+r<<8)+g<<8)+b;
     }
-    private static Tuple toRGB (double h, double s, double l) {
+    private static void toRGB (double h, double s, double l) {
         double r = 0, g = 0, b = 0;
         if (s == 0) {
             r = g = b = 1;
