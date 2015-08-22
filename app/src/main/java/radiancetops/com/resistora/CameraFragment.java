@@ -68,9 +68,6 @@ public class CameraFragment extends Fragment {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
         }
-        stripheight = 54;
-        camera = getCameraInstance();
-        setCamParameters(camera);
     }
 
     private void setCamParameters(Camera camera) {
@@ -86,15 +83,11 @@ public class CameraFragment extends Fragment {
             Log.d("CameraFragment", "max focus areas: " + p.getMaxNumFocusAreas());
             List<Camera.Area> areas = new ArrayList<>();
             Rect r = new Rect(
-                    (int) (w / 3), (int) (h / 2 - stripheight / 2), (int) (w * 2 / 3),
-                    (int) (h / 2 + stripheight / 2));
+                    (int) (w / 2 - stripheight / 2), (int) (h / 3), (int) (w / 2 + stripheight / 2),
+                    (int) (2 * h / 3));
             Log.d("CameraFragment", "rect: " + r.flattenToString());
             areas.add(new Camera.Area(r, 1));
             p.setFocusAreas(areas);
-
-            for(String s : p.getSupportedFocusModes()) {
-                Log.d("CameraFragment", "focus mode: " + s);
-            }
         }
         camera.setParameters(p);
     }
@@ -123,7 +116,7 @@ public class CameraFragment extends Fragment {
 
         markerView = (MarkerView)view.findViewById(R.id.markerView);
 
-        cameraPreview = new CameraPreview(getActivity(), camera,(int) stripheight, resistanceTextView,markerView);
+        cameraPreview = new CameraPreview(getActivity());
 
         FrameLayout frameLayout = (FrameLayout)view.findViewById(R.id.camera_preview);
         FrameLayout.LayoutParams surfaceViewParams = new FrameLayout.LayoutParams(FrameLayout.LayoutParams.WRAP_CONTENT,FrameLayout.LayoutParams.WRAP_CONTENT);
@@ -175,6 +168,10 @@ public class CameraFragment extends Fragment {
     public void onResume() {
         super.onResume();
         camera = getCameraInstance();
+        stripheight = markerView.getHeight();
+        Log.v("CameraFragment", "stripheight: " + stripheight);
+        setCamParameters(camera);
+        cameraPreview.initVals(camera, (int) stripheight, resistanceTextView, markerView);
     }
 
     @Override

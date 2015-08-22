@@ -28,15 +28,9 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
     private ImageHandler handler;
     private byte[] handleBuffer;
 
-    public CameraPreview(Context context, Camera camera, int stripheight, TextView t,MarkerView m) {
+    public CameraPreview(Context context) {
         super(context);
-        mCamera = camera;
         this.context = context;
-
-        Camera.Size size = mCamera.getParameters().getPreviewSize();
-        this.handler = new ImageHandler(size.width, size.height, stripheight, t,m);
-        int bufsize = size.width * size.height * 3;
-        handleBuffer = new byte[bufsize];
 
         // Install a SurfaceHolder.Callback so we get notified when the
         // underlying surface is created and destroyed.
@@ -45,6 +39,15 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
         // deprecated setting, but required on Android versions prior to 3.0
         mHolder.setType(SurfaceHolder.SURFACE_TYPE_PUSH_BUFFERS);
     }
+
+    public void initVals(Camera camera, int stripheight, TextView t,MarkerView m) {
+        this.mCamera = camera;
+        Camera.Size size = mCamera.getParameters().getPreviewSize();
+        this.handler = new ImageHandler(size.width, size.height, stripheight, t,m);
+        int bufsize = size.width * size.height * 3;
+        handleBuffer = new byte[bufsize];
+    }
+
     public void writeCSV(){
         handler.writeCSV();
     }

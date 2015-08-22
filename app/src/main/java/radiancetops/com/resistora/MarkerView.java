@@ -29,7 +29,6 @@ public class MarkerView extends View {
 
         firstTime = true;
         width = -1;
-        height = -1;
 
         bandLocation = new ArrayList<Integer>();
 

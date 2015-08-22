@@ -22,7 +22,6 @@ public class LineView extends View {
     public LineView(Context context, AttributeSet attrs) {
         super(context, attrs);
         paint = new Paint();
-
     }
 
 
@@ -54,6 +53,5 @@ public class LineView extends View {
         canvas.drawLine(0, 0, width, 0, paint);
         canvas.drawLine(0,height,width,height,paint);
         Log.v("line dims", "" + width + "  " + height);
-
     }
 }
