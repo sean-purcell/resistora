@@ -85,7 +85,7 @@ public class MarkerView extends View {
         //super.onDraw(canvas);
         setup();
 
-        paint.setStrokeWidth(4);
+        paint.setStrokeWidth(6);
         for (int i = 0; i < bandLocation.size(); i++){
             paint.setColor(presetRGB[colorIndexes.get(i)]);
             canvas.drawLine(bandLocation.get(i), 0, bandLocation.get(i), height, paint);
@@ -94,9 +94,9 @@ public class MarkerView extends View {
         }
 
 
-        paint.setColor(Color.BLACK);
-        canvas.drawLine(0, 0, width, 0, paint);
-        canvas.drawLine(0, height, width, height, paint);
+        //paint.setColor(Color.BLACK);
+       // canvas.drawLine(0, 0, width, 0, paint);
+        //canvas.drawLine(0, height, width, height, paint);
         Log.v("band dims", "" + width + "  " + height);
 
 

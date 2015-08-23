@@ -21,8 +21,8 @@
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:text="@string/instructions"
         android:textSize="18dp"
-        android:background="@color/background_floating_material_dark"
-        android:textColor="@color/background_floating_material_light"
+        android:background="@color/grayText"
+        android:textColor="@color/white"
         android:alpha="125" />
 
     <radiancetops.com.resistora.LineView
@@ -37,8 +37,8 @@
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:layout_alignParentBottom="true"
         android:gravity="center"
-        android:background="@color/background_floating_material_dark"
-        android:textColor="@color/background_floating_material_light"
+        android:background="@color/grayText"
+        android:textColor="@color/white"
         android:textSize="18dp"
         android:id="@+id/resistanceTextView" />
 
@@ -51,7 +51,7 @@
     <radiancetops.com.resistora.MarkerView
         android:layout_width="match_parent"
         android:id="@+id/markerView"
-        android:layout_height="18dp"
+        android:layout_height="48dp"
         android:layout_centerInParent="true"/>
 
 </RelativeLayout>

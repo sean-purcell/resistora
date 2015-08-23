@@ -37,6 +37,7 @@ public class CameraFragment extends Fragment {
     private CameraPreview cameraPreview;
     private MarkerView markerView;
     private TextView resistanceTextView;
+    private TextView instructionsTextView;
     private LineView lineView;
     private float stripheight;
     private Button singleButton;
@@ -114,7 +115,11 @@ public class CameraFragment extends Fragment {
             }
         });
         resistanceTextView = (TextView)view.findViewById(R.id.resistanceTextView);
+        resistanceTextView.setTypeface(MainActivity.typefaceHeader);
         resistanceTextView.setText("\n" + WAITING + "\n");
+
+        instructionsTextView = (TextView)view.findViewById(R.id.instructionsTextView);
+        instructionsTextView.setTypeface(MainActivity.typefaceHeader);
 
         markerView = (MarkerView)view.findViewById(R.id.markerView);
 

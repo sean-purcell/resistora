@@ -1,6 +1,7 @@
 package radiancetops.com.resistora;
 
 import android.app.FragmentTransaction;
+import android.graphics.Typeface;
 import android.net.Uri;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
@@ -11,11 +12,14 @@ import android.view.MenuItem;
 
 public class MainActivity extends AppCompatActivity implements CameraFragment.OnFragmentInteractionListener{
     private CameraFragment cameraFragment;
+    public static Typeface typefaceHeader;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        typefaceHeader = Typeface.createFromAsset(getAssets(), "fonts/nanumgothic.ttf");
         cameraFragment = new CameraFragment();//initializing first fragment being used
 
         getFragmentManager()
