@@ -72,7 +72,7 @@ public class MarkerView extends View {
 
     public void setBandLocation (int [] bandLocation, int [] colorIndexes){
         this.bandLocation = new ArrayList<Integer>();
-        this.colorIndexes = new ArrayList<Integer>(); 
+        this.colorIndexes = new ArrayList<Integer>();
         for (int i = 0; i < bandLocation.length; i++){
             this.bandLocation.add(bandLocation[i]);
             this.colorIndexes.add(colorIndexes[i]);
