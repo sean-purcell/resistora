@@ -87,10 +87,11 @@ public class ImageHandler implements Camera.PreviewCallback {
 
         int[] cols = new int[4];
 
-        for(int i = 0; i < idxs.length; i++) {
+        for(int i = 0; i < idxs.length-1; i++) {
             /* image is reversed due to rotation */
             cols[i] = getResistorColor(rgb1[width - idxs[i] - 1][0]);
         }
+        cols[idxs.length-1] = getGoldSilver(rgb1[width - idxs[idxs.length-1] - 1][0]);
 
         rtv.setText("\n" + resistanceValue(cols[3], cols[2], cols[1], cols[0]) + "\n" + cols[0] + " " + cols[1] + " " + cols[2] + " " + cols[3]);
         //rtv.setText(idxs[0] + " " + idxs[1] + " " + idxs[2] + " " + idxs[3]);
@@ -291,7 +292,7 @@ public class ImageHandler implements Camera.PreviewCallback {
 				avgsat += s;
 			}
         avgsat /= HEIGHT * WIDTH;
-		
+
 
         for (int i = 0; i < WIDTH; i++) {
             for (int j = 0; j < HEIGHT; j++) {
@@ -362,9 +363,7 @@ public class ImageHandler implements Camera.PreviewCallback {
         if (l > 0.90) return 9;
 
         if (Math.max(r, Math.max(g, b)) - Math.min(r,  Math.min(g,b)) < 10){
-            if ((r+g+b)/3 > 160) return 8;
-            else return 11;
-
+            return 8;
         }
         if (h > 0.95 || h < 0.093){ // red,orange or brown
             if (((l < 0.32 || s<0.51) && (h>0.01 && h < 0.04)) || ((l<0.29 || s < 0.42) && h>=0.05 && h <= 0.093)) return 1;
@@ -372,8 +371,7 @@ public class ImageHandler implements Camera.PreviewCallback {
             else return 3;
         }
         if (h >= 0.093 && h < 0.21){
-            if (s < 0.5 || l < 0.27) return 10;
-            else return 4;
+            return 4;
         }
 
         if (h >= 0.21 && h < 0.49)
@@ -385,7 +383,12 @@ public class ImageHandler implements Camera.PreviewCallback {
 
         return 12;
 
-
+    }
+    private static int getGoldSilver(int rgb){
+        if (Math.max(r, Math.max(g, b)) - Math.min(r,  Math.min(g,b)) < 10){
+             return 11;
+        }
+        return 10;
     }
     // get the R value (0, 255) from a 32 bit integer
     private static int getRed (int n) {
