@@ -20,7 +20,7 @@ public class ImageHandler implements Camera.PreviewCallback {
 
     private double[] Ha, Sa, La, diff;
 
-    private int[] idxs;
+    private int[] idxs, cols;
 
 	private static double h, s, l, r, g, b;
 
@@ -45,6 +45,7 @@ public class ImageHandler implements Camera.PreviewCallback {
         this.diff = new double[width];
 
         this.idxs = new int[4];
+        this.cols = new int[4];
         this.rtv = rtv;
 
         this.markerTextView = markerView;
@@ -64,7 +65,7 @@ public class ImageHandler implements Camera.PreviewCallback {
 
         colors(idxs, rgb);
 
-        markerTextView.setBandLocation(idxs);
+        markerTextView.setBandLocation(idxs, cols);
 
         camera.addCallbackBuffer(data);
         //camera.autoFocus(null);
@@ -82,10 +83,8 @@ public class ImageHandler implements Camera.PreviewCallback {
         }
 
         initializeColors();
-        normalizeSat();
+        normalizeGray();
         avgColorStrip();
-
-        int[] cols = new int[4];
 
         for(int i = 0; i < idxs.length-1; i++) {
             /* image is reversed due to rotation */
@@ -93,7 +92,7 @@ public class ImageHandler implements Camera.PreviewCallback {
         }
         cols[idxs.length-1] = getGoldSilver(rgb1[width - idxs[idxs.length-1] - 1][0]);
 
-        rtv.setText("\n" + resistanceValue(cols[3], cols[2], cols[1], cols[0]) + "\n" + cols[0] + " " + cols[1] + " " + cols[2] + " " + cols[3]);
+        rtv.setText("\n" + resistanceValue(cols[0], cols[1], cols[2], cols[3]) + "\n" + cols[0] + " " + cols[1] + " " + cols[2] + " " + cols[3]);
         //rtv.setText(idxs[0] + " " + idxs[1] + " " + idxs[2] + " " + idxs[3]);
     }
 
