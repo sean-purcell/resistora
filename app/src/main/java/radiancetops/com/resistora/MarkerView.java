@@ -72,6 +72,7 @@ public class MarkerView extends View {
 
     public void setBandLocation (int [] bandLocation, int [] colorIndexes){
         this.bandLocation = new ArrayList<Integer>();
+        this.colorIndexes = new ArrayList<Integer>(); 
         for (int i = 0; i < bandLocation.length; i++){
             this.bandLocation.add(bandLocation[i]);
             this.colorIndexes.add(colorIndexes[i]);
@@ -83,15 +84,17 @@ public class MarkerView extends View {
     public void onDraw(Canvas canvas) {
         //super.onDraw(canvas);
         setup();
+
         paint.setStrokeWidth(4);
         for (int i = 0; i < bandLocation.size(); i++){
             paint.setColor(presetRGB[colorIndexes.get(i)]);
-            canvas.drawLine(bandLocation.get(i),0 , bandLocation.get(i), height, paint);
-            Log.v("band location",""+bandLocation.get(i));
+            canvas.drawLine(bandLocation.get(i), 0, bandLocation.get(i), height, paint);
+            Log.v("band location", "" + bandLocation.get(i));
+            Log.v("color Index",""+colorIndexes.get(i));
         }
 
 
-
+        paint.setColor(Color.BLACK);
         canvas.drawLine(0, 0, width, 0, paint);
         canvas.drawLine(0, height, width, height, paint);
         Log.v("band dims", "" + width + "  " + height);
