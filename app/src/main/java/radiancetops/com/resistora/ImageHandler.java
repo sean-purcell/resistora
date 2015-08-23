@@ -353,9 +353,9 @@ public class ImageHandler implements Camera.PreviewCallback {
         }
     }
     private static int getResistorColor (int rgb) {
-        int r = getRed(rgb);
-        int g = getGreen(rgb);
-        int b = getBlue(rgb);
+        r = getRed(rgb);
+        g = getGreen(rgb);
+        b = getBlue(rgb);
         toHSL(r, g, b);
         // BLACK AND WHITE
         if (l < 0.13) return 0;
@@ -423,12 +423,11 @@ public class ImageHandler implements Camera.PreviewCallback {
             h /= 6.0;
         }
     }
-    private static int rgbToInt(int r, int g, int b){
+    private static int rgbToInt(int locR, int locG, int locB){
         int a = 255;
-        return (((a<<8)+r<<8)+g<<8)+b;
+        return (((a<<8)+locR<<8)+locG<<8)+locB;
     }
     private static void toRGB (double h, double s, double l) {
-        double r = 0, g = 0, b = 0;
         if (s == 0) {
             r = g = b = 1;
         } else {
