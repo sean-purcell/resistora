@@ -89,11 +89,12 @@ public class ImageHandler implements Camera.PreviewCallback {
         avgColorStrip();
 
 
-        for(int i = 0; i < idxs.length-1; i++) {
+        for (int i = 0; i < idxs.length - 1; i++) {
             /* image is reversed due to rotation */
             cols[i] = getResistorColor(rgb1[width - idxs[i] - 1][0]);
         }
-        cols[idxs.length-1] = getGoldSilver(rgb1[width - idxs[idxs.length-1] - 1][0]);
+        cols[idxs.length - 1] = getGoldSilver(rgb1[width - idxs[idxs.length - 1] - 1][0]);
+    }
 
     private void validateColors() {
         for(int i = 0; i < 3; i++) {
