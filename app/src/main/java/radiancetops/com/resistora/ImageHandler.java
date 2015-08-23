@@ -64,7 +64,9 @@ public class ImageHandler implements Camera.PreviewCallback {
         findMaxima();
 
         colors(idxs, rgb);
+        validateColors();
 
+        rtv.setText("\n" + resistanceValue(cols[0], cols[1], cols[2], cols[3]) + "\n" + cols[0] + " " + cols[1] + " " + cols[2] + " " + cols[3]);
         markerTextView.setBandLocation(idxs, cols);
 
         camera.addCallbackBuffer(data);
@@ -76,8 +78,8 @@ public class ImageHandler implements Camera.PreviewCallback {
         HEIGHT = stripheight;
         rgb1 = new int[WIDTH][HEIGHT];
         output1 = new int[WIDTH][HEIGHT];
-        for(int i = 0; i < width; i++) {
-            for(int j = 0; j < stripheight; j++) {
+        for (int i = 0; i < width; i++) {
+            for (int j = 0; j < stripheight; j++) {
                 rgb1[i][j] = rgb[j * width + i];
             }
         }
@@ -86,13 +88,26 @@ public class ImageHandler implements Camera.PreviewCallback {
         normalizeGray();
         avgColorStrip();
 
-        for(int i = 0; i < idxs.length; i++) {
+
+        for(int i = 0; i < idxs.length-1; i++) {
             /* image is reversed due to rotation */
             cols[i] = getResistorColor(rgb1[width - idxs[i] - 1][0]);
         }
+        cols[idxs.length-1] = getGoldSilver(rgb1[width - idxs[idxs.length-1] - 1][0]);
 
-        rtv.setText("\n" + resistanceValue(cols[0], cols[1], cols[2], cols[3]) + "\n" + cols[0] + " " + cols[1] + " " + cols[2] + " " + cols[3]);
-        //rtv.setText(idxs[0] + " " + idxs[1] + " " + idxs[2] + " " + idxs[3]);
+    private void validateColors() {
+        for(int i = 0; i < 3; i++) {
+            if(cols[i] == 10) {
+                cols[i] = 4;
+            }
+            if(cols[i] == 11) {
+                cols[i] = 8;
+            }
+        }
+        
+        if(cols[3] == 2 || cols[3] == 1) {
+            cols[3] = 10;
+        }
     }
 
     private  String resistanceValue (int a, int b, int c, int tolerance){
@@ -130,9 +145,9 @@ public class ImageHandler implements Camera.PreviewCallback {
 
     private void findMaxima() {
         int[] midx = new int[4];
-        for(int i = 7; i < this.width - 7; i++) {
+        for(int i = 20; i < this.width - 20; i++) {
             boolean nvalid = false;
-            for(int j = i - 4; j <= i + 4; j++) {
+            for(int j = i - 20; j <= i + 20; j++) {
                 if(i == j) continue;
                 if(diff[j] >= diff[i]) {
                     nvalid = true;
@@ -290,7 +305,7 @@ public class ImageHandler implements Camera.PreviewCallback {
 				avgsat += s;
 			}
         avgsat /= HEIGHT * WIDTH;
-		
+
 
         for (int i = 0; i < WIDTH; i++) {
             for (int j = 0; j < HEIGHT; j++) {
@@ -361,9 +376,7 @@ public class ImageHandler implements Camera.PreviewCallback {
         if (l > 0.90) return 9;
 
         if (Math.max(r, Math.max(g, b)) - Math.min(r,  Math.min(g,b)) < 10){
-            if ((r+g+b)/3 > 160) return 8;
-            else return 11;
-
+            return 8;
         }
         if (h > 0.95 || h < 0.093){ // red,orange or brown
             if (((l < 0.32 || s<0.51) && (h>0.01 && h < 0.04)) || ((l<0.29 || s < 0.42) && h>=0.05 && h <= 0.093)) return 1;
@@ -371,8 +384,7 @@ public class ImageHandler implements Camera.PreviewCallback {
             else return 3;
         }
         if (h >= 0.093 && h < 0.21){
-            if (s < 0.5 || l < 0.27) return 10;
-            else return 4;
+            return 4;
         }
 
         if (h >= 0.21 && h < 0.49)
@@ -384,7 +396,12 @@ public class ImageHandler implements Camera.PreviewCallback {
 
         return 12;
 
-
+    }
+    private static int getGoldSilver(int rgb){
+        if (Math.max(r, Math.max(g, b)) - Math.min(r,  Math.min(g,b)) < 10){
+             return 11;
+        }
+        return 10;
     }
     // get the R value (0, 255) from a 32 bit integer
     private static int getRed (int n) {
