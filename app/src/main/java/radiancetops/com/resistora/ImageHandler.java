@@ -62,7 +62,7 @@ public class ImageHandler implements Camera.PreviewCallback {
         // Find the maxima
         findMaxima();
 
-        //colors(idxs, rgb);
+        colors(idxs, rgb);
 
         markerTextView.setBandLocation(idxs);
 
