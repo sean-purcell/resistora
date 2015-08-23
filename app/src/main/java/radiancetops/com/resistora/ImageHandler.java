@@ -82,7 +82,7 @@ public class ImageHandler implements Camera.PreviewCallback {
         }
 
         initializeColors();
-        normalizeSat();
+        normalizeGray();
         avgColorStrip();
 
         int[] cols = new int[4];
