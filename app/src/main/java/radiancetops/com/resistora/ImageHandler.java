@@ -20,7 +20,7 @@ public class ImageHandler implements Camera.PreviewCallback {
 
     private double[] Ha, Sa, La, diff;
 
-    private int[] idxs;
+    private int[] idxs, cols;
 
 	private static double h, s, l, r, g, b;
 
@@ -45,6 +45,7 @@ public class ImageHandler implements Camera.PreviewCallback {
         this.diff = new double[width];
 
         this.idxs = new int[4];
+        this.cols = new int[4];
         this.rtv = rtv;
 
         this.markerTextView = markerView;
@@ -64,7 +65,7 @@ public class ImageHandler implements Camera.PreviewCallback {
 
         colors(idxs, rgb);
 
-        markerTextView.setBandLocation(idxs);
+        markerTextView.setBandLocation(idxs, cols);
 
         camera.addCallbackBuffer(data);
         //camera.autoFocus(null);
@@ -84,8 +85,6 @@ public class ImageHandler implements Camera.PreviewCallback {
         initializeColors();
         normalizeSat();
         avgColorStrip();
-
-        int[] cols = new int[4];
 
         for(int i = 0; i < idxs.length; i++) {
             /* image is reversed due to rotation */

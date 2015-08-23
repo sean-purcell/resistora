@@ -49,7 +49,7 @@ public class MarkerView extends View {
 
     }//initialisation of the gameboard
 
-    public void setBandLocation (int [] bandLocation){
+    public void setBandLocation (int [] bandLocation, int [] colorIndexes){
         this.bandLocation = new ArrayList<Integer>();
         for (int i = 0; i < bandLocation.length; i++){
             this.bandLocation.add(bandLocation[i]);
